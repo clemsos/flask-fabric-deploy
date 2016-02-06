@@ -1,10 +1,17 @@
 # flask-fabric-deploy
 
-Fabric scripts to deploy projects made with Python / Flask
+Fabric scripts to deploy projects using Python, Pip, Bower, Gunicorn and Supervisor (tested with Flask on Debian).
 
-Using Python, Pip, Bower, Gunicorn and Supervisor
+## Usage
 
-Should have a ```wsgi.py``` containing a ```app``` object
+Edit ```settings.py``` and ```servers.py``` according to your needs
+
+    fab setup_debian 
+    fab deploy
+    fab setup_server
+    fab restart
+
+NB : Your project hould have a ```wsgi.py``` file to run the application
 
 ### TODO
 

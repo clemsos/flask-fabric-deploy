@@ -7,14 +7,9 @@ from fabvenv import virtualenv, make_virtualenv
 from config.settings import *
 
 def setup_project():
-    """ Initial setup of the project """
+    """ Update the last version of the project """
     update_code_from_git()
     create_virtual_env()
-    update_requirements()
-
-def update_project():
-    """ Get latest version of code and dependencies""" 
-    update_code_from_git()
     update_requirements()
     if USE_BOWER : bower_install()
 

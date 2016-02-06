@@ -13,11 +13,10 @@ VHOST_NAME = APP_NAME
 NGINX_VHOST_DIR = '/etc/nginx/conf.d/'
 SUPERVISOR_DIR = '/etc/supervisor/conf.d/'
 GUNICORN_CONFIG_FILE=os.path.join(CONFIG_DIR,"gunicorn-conf.py")
-WEBPORT=5010
 
-# Templates 
+# Templates
 def _render_template(string, context):
-    """ Parse template for config files using Jinja2""" 
+    """ Parse template for config files using Jinja2"""
     return Template(string).render(context)
 
 def make_supervisor_conf():
@@ -32,14 +31,14 @@ def make_supervisor_conf():
         "venv_path"      : VIRTUALENV_PATH,
         "application" : APP_MAIN_FILE
     }
-    
+
     if not exists(SUPERVISOR_DIR):
         sudo('mkdir -p %s' % SUPERVISOR_DIR)
 
     upload_template("templates/supervisor.tpl", "%s%s.conf"%(SUPERVISOR_DIR,VHOST_NAME), context=supervisor_context, use_jinja=True, use_sudo=True,backup=False)
 
 def make_nginx_vhost():
-    """ Create config file for NGINX """ 
+    """ Create config file for NGINX """
     nginx_context={
         'domain': VHOST_NAME,
         'root': CODE_DIR,
@@ -60,7 +59,7 @@ def make_gunicorn_conf():
     gunicorn_context={
         'pid' : TOPOGRAM_PID,
         'log' : LOG_DIR,
-        'webport' : WEBPORT 
+        'webport' : WEBPORT
     }
 
     upload_template("templates/gunicorn.tpl",GUNICORN_CONFIG_FILE, context=gunicorn_context, use_jinja=True, use_sudo=True,backup=False)
@@ -70,13 +69,14 @@ def create_dirs():
     run('mkdir -p %s' % LOG_DIR)
     run('mkdir -p %s' % CONFIG_DIR)
     run('mkdir -p %s' % RUN_DIR)
+    sudo('chown -R www-data:www-data %s' % RUN_DIR)
 
 def create_logs():
-    """ Create log files and directories """ 
+    """ Create log files and directories """
 
-    run('touch %s/access.log' % LOG_DIR)
-    run('touch %s/error.log' % LOG_DIR)
-
+    sudo('touch %s/access.log' % LOG_DIR)
+    sudo('touch %s/error.log' % LOG_DIR)
+    sudo('chown -R www-data:www-data %s' % LOG_DIR)
 
 # supervisor and nginx
 def install_gunicorn():
@@ -123,5 +123,3 @@ def setup_server():
 
     make_nginx_vhost()
     restart_webserver()
-
-
